@@ -1,14 +1,14 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
 $conn = mysqli_connect("localhost", "root", "", "my_daily_glam");
 
-
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user_id = 1; 
+    $user_id     = isset($_COOKIE['user_id']) ? $_COOKIE['user_id'] : 1 ; 
     $nama_produk = mysqli_real_escape_string($conn, $_POST['product_name']);
     $brand       = mysqli_real_escape_string($conn, $_POST['brand']);
+    $harga       = mysqli_real_escape_string($conn, $_POST['price']); 
     $jenis       = mysqli_real_escape_string($conn, $_POST['category']);
     $waktu_pakai = "Pagi & Malam"; 
     $status      = "Aktif";
@@ -27,8 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $final_image_db = $new_filename; 
         }
     }
-
-    $sql = "INSERT INTO skincare_inventory (user_id, nama_produk, brand, jenis, waktu_pakai, status, expired_date, gambar) VALUES ('$user_id', '$nama_produk', '$brand', '$jenis', '$waktu_pakai', '$status', '$expired_date', '$final_image_db')";
+    
+    $sql = "INSERT INTO skincare_inventory (user_id, nama_produk, brand, harga, jenis, waktu_pakai, status, expired_date, gambar) 
+            VALUES ('$user_id', '$nama_produk', '$brand', '$harga', '$jenis', '$waktu_pakai', '$status', '$expired_date', '$final_image_db')";
 
     if (mysqli_query($conn, $sql)) {
         $success = true;
