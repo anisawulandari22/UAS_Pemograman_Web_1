@@ -1,7 +1,7 @@
 # MY_DAILY_GLAM
 
 My Daily Glam adalah aplikasi pendamping kecantikan dan perawatan diri (self-care) yang dirancang untuk membantu pengguna mengelola rutinitas harian, inventaris produk kecantikan, dengan estetika yang "Girly & Cheerful".
-<img width="1919" height="968" alt="image" src="https://github.com/user-attachments/assets/8088a371-5f5b-4620-ba74-c2d0077d6794" />
+
 ## Fitur Aplikasi
 ### 1. Halaman Login
 
