@@ -1,9 +1,9 @@
 <?php
-if (!isset($_COOKIE['user_id'])) {
-    header("Location: auth/login.php");
-    exit;
-}
-$nama_user = $_COOKIE['user_name'];
+session_start();
+
+$is_logged_in = isset($_SESSION['is_login']) && $_SESSION['is_login'] === true;
+
+$nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -12,7 +12,7 @@ $nama_user = $_COOKIE['user_name'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - MyDailyGlam</title>
     <link rel="stylesheet" href="assets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
@@ -32,6 +32,7 @@ $nama_user = $_COOKIE['user_name'];
             position: relative;
         }
 
+        /* --- Elemen Bunga Background --- */
         .flower {
             position: fixed;
             color: rgba(255, 182, 193, 0.2); 
@@ -44,6 +45,7 @@ $nama_user = $_COOKIE['user_name'];
         .flower-1 { top: -50px; right: -50px; font-size: 300px; transform: rotate(20deg); }
         .flower-2 { bottom: -30px; left: -30px; font-size: 200px; transform: rotate(-15deg); }
 
+        /* --- Top Navbar --- */
         .top-header {
             background: white;
             padding: 15px 40px;
@@ -64,7 +66,7 @@ $nama_user = $_COOKIE['user_name'];
             gap: 10px;
             text-decoration: none;
         }
-        .btn-logout-pill {
+        .btn-auth-pill {
             background: var(--pink-gradient);
             color: white;
             padding: 8px 20px;
@@ -75,8 +77,10 @@ $nama_user = $_COOKIE['user_name'];
             align-items: center;
             gap: 8px;
             font-size: 14px;
+            border: none;
         }
 
+        /* Sidebar Styling */
         .sidebar {
             height: 100vh;
             width: 260px;
@@ -104,11 +108,13 @@ $nama_user = $_COOKIE['user_name'];
             border-radius: 15px;
         }
 
+        /* Main Content Area */
         .main-content {
             margin-left: 260px;
             padding: 40px;
         }
 
+        /* Banner Style */
         .banner-glam {
             background: var(--pink-gradient);
             border-radius: 30px; padding: 40px;
@@ -116,6 +122,7 @@ $nama_user = $_COOKIE['user_name'];
             box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
         }
 
+        /* Action Cards Styling */
         .action-card {
             background: white; border: none; border-radius: 25px; padding: 20px;
             text-align: center; transition: 0.3s; cursor: pointer; height: 100%;
@@ -136,6 +143,7 @@ $nama_user = $_COOKIE['user_name'];
             height: 100%;
         }
 
+        /* Mood Tracker Icons */
         .mood-icon {
             font-size: 42px !important;
             cursor: pointer;
@@ -147,6 +155,7 @@ $nama_user = $_COOKIE['user_name'];
         }
         .mood-box { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
 
+        /* Skincare List */
         .skincare-item {
             background: #FFF9FA;
             padding: 15px;
@@ -179,9 +188,22 @@ $nama_user = $_COOKIE['user_name'];
             <span class="material-symbols-rounded" style="font-size: 32px;">face_retouching_natural</span>
             My Daily Glam
         </a>
-        <a href="logout.php" class="btn-logout-pill">
-            <span class="material-symbols-rounded" style="font-size: 20px;">logout</span> Keluar
-        </a>
+        
+        <?php if($is_logged_in): ?>
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2 fw-semibold" style="color: var(--pink-dark);">
+                    <span class="material-symbols-rounded">account_circle</span>
+                    <?= htmlspecialchars($nama_user); ?>
+                </div>
+                <a href="auth/logout.php" class="btn-auth-pill" onclick="return confirm('Apakah Anda yakin ingin keluar?')">
+                    <span class="material-symbols-rounded" style="font-size: 20px;">logout</span> Keluar
+                </a>
+            </div>
+        <?php else: ?>
+            <a href="auth/login.php" class="btn-auth-pill">
+                <span class="material-symbols-rounded" style="font-size: 20px;">login</span> Masuk
+            </a>
+        <?php endif; ?>
     </header>
 
     <div class="sidebar">
@@ -198,7 +220,9 @@ $nama_user = $_COOKIE['user_name'];
     <div class="main-content">
         <div class="banner-glam">
             <h1 class="mb-1">Hai, <?php echo htmlspecialchars($nama_user); ?>! ✨</h1>
-            <p class="mb-0">Kulitmu bersinar hari ini. Siap untuk rutinitasmu?</p>
+            <p class="mb-0">
+                <?php echo $is_logged_in ? "Kulitmu bersinar hari ini. Siap untuk rutinitasmu?" : "Rawat kulitmu sekarang. Masuk untuk mencatat rutinitasmu!"; ?>
+            </p>
         </div>
 
         <div class="row g-3 mb-5">
@@ -254,7 +278,7 @@ $nama_user = $_COOKIE['user_name'];
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold m-0">Jadwal Skincare</h5>
                         <span class="text-muted small"><?php 
-                            setlocale(LC_TIME, 'id_ID.utf8');
+                            date_default_timezone_set('Asia/Jakarta');
                             echo date('l, d F Y'); 
                         ?></span>
                     </div>
@@ -271,20 +295,6 @@ $nama_user = $_COOKIE['user_name'];
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="step2">
                                 <label class="form-check-label fw-600 ms-2" for="step2">Hydrating Toner</label>
-                            </div>
-                            <span class="tag-morning">PAGI</span>
-                        </div>
-                        <div class="skincare-item">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="step3">
-                                <label class="form-check-label fw-600 ms-2" for="step3">Niacinamide Serum</label>
-                            </div>
-                            <span class="tag-night">MALAM</span>
-                        </div>
-                        <div class="skincare-item">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="step4">
-                                <label class="form-check-label fw-600 ms-2" for="step4">Moisturizer & Sunscreen</label>
                             </div>
                             <span class="tag-morning">PAGI</span>
                         </div>
@@ -310,24 +320,17 @@ $nama_user = $_COOKIE['user_name'];
                             <span class="material-symbols-rounded mood-icon" style="color: #AEC6CF;">sentiment_neutral</span>
                             <span class="small mt-2">Biasa Saja</span>
                         </div>
-                        <div class="mood-box" onclick="setMood(this, 'Stres')">
-                            <span class="material-symbols-rounded mood-icon" style="color: #FF6961;">sentiment_dissatisfied</span>
-                            <span class="small mt-2">Stres</span>
-                        </div>
                     </div>
 
                     <button onclick="saveMood()" class="btn w-100 py-3 mt-2 fw-bold" style="background: var(--pink-gradient); color: white; border-radius: 15px; border: none;">
                         Simpan
                     </button>
-
-                    <div class="mt-4 p-3" style="background: var(--pink-light); border-radius: 15px;">
-                        <p class="small mb-0 text-pink-dark"><strong>Tip:</strong> Stres dapat memicu jerawat. Luangkan 5 menit untuk bernafas hari ini! 🌸</p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let selectedMood = 'Senang';
 
@@ -340,25 +343,31 @@ $nama_user = $_COOKIE['user_name'];
         }
 
         function saveMood() {
+            <?php if(!$is_logged_in): ?>
+                Swal.fire({
+                    title: 'Ups!',
+                    text: 'Kamu harus login dulu untuk menyimpan mood.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#FF69B4',
+                    confirmButtonText: 'Login Sekarang'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'auth/login.php';
+                    }
+                });
+                return;
+            <?php endif; ?>
+
             localStorage.setItem('last_mood', selectedMood);
-            
             Swal.fire({
                 title: 'Berhasil!',
                 text: `Mood "${selectedMood}" kamu telah disimpan.`,
                 icon: 'success',
                 confirmButtonColor: '#FF69B4',
-                confirmButtonText: 'Lihat Riwayat Mood'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'pages/mood.php';
-                }
+                confirmButtonText: 'OK'
             });
         }
     </script>
-
-<?php
-require_once 'includes/footer.php';
-?>
-
 </body>
 </html>
