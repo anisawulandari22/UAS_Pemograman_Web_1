@@ -1,13 +1,18 @@
 <?php
-if (!isset($_COOKIE['user_id'])) {
+session_start();
+
+include '../koneksi/connection.php';
+
+if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true) {
     header("Location: ../auth/login.php");
     exit;
 }
-$nama_user = $_COOKIE['user_name'];
+
+$user_id = $_SESSION['user_id'];
+$nama_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
 
 $conn = mysqli_connect("localhost", "root", "", "my_daily_glam");
-
-$query = "SELECT * FROM skincare_inventory ORDER BY id DESC";
+$query = "SELECT * FROM skincare_inventory WHERE user_id = '$user_id' ORDER BY id DESC";
 $result = mysqli_query($conn, $query);
 ?>
 
@@ -18,7 +23,7 @@ $result = mysqli_query($conn, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produk Saya - MyDailyGlam</title>
     <link rel="stylesheet" href="../assets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
     
     <style>
@@ -81,7 +86,6 @@ $result = mysqli_query($conn, $query);
             gap: 8px;
             font-size: 14px;
         }
-
         .sidebar {
             height: 100vh;
             width: 260px;
@@ -157,6 +161,7 @@ $result = mysqli_query($conn, $query);
             transform: translateY(-50%);
             color: var(--pink-primary);
         }
+
         .product-card {
             background: white;
             border-radius: 25px;
@@ -170,13 +175,6 @@ $result = mysqli_query($conn, $query);
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(255, 105, 180, 0.15);
-        }
-        .product-img-wrapper {
-            height: 180px;
-            background: #FFF9FA;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .brand-name {
             font-size: 0.75rem;
@@ -241,7 +239,7 @@ $result = mysqli_query($conn, $query);
         <div class="header-section">
             <div>
                 <h2 class="fw-bold mb-0" style="color: var(--pink-dark);">Produk Saya</h2>
-                <p class="text-muted">Kelola koleksi produk kecantikanmu</p>
+                <p class="text-muted">Kelola koleksi produk kecantikanmu, <?= htmlspecialchars($nama_user) ?></p>
             </div>
             <a href="add_products.php" class="btn-add-product">
                 <span class="material-symbols-rounded">add</span> Tambah Produk
@@ -250,13 +248,13 @@ $result = mysqli_query($conn, $query);
 
         <div class="search-container">
             <span class="material-symbols-rounded search-icon">search</span>
-            <input type="text" class="search-input" placeholder="Cari nama produk atau merek...">
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari nama produk atau merek...">
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4" id="productGrid">
             <?php if (mysqli_num_rows($result) > 0): ?>
                 <?php while($row = mysqli_fetch_assoc($result)): ?>
-                    <div class="col-md-4 col-lg-3">
+                    <div class="col-md-4 col-lg-3 product-item">
                         <div class="product-card">
                             <div class="wishlist-icon">
                                 <span class="material-symbols-rounded">favorite</span>
@@ -282,23 +280,45 @@ $result = mysqli_query($conn, $query);
                                     <span class="badge-category"><?= htmlspecialchars($row['jenis']) ?></span>
                                     <small class="text-muted" style="font-size: 11px;">🕒 <?= $row['waktu_pakai'] ?></small>
                                 </div>
+                                
+                                <div class="d-flex gap-2 mt-3 pt-3 border-top">
+                                    <a href="edit_product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-secondary w-50" style="border-radius: 10px; font-size: 12px;">
+                                        <span class="material-symbols-rounded" style="font-size: 16px; vertical-align: middle;">edit</span> Edit
+                                    </a>
+                                    <a href="delete_product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-danger w-50" style="border-radius: 10px; font-size: 12px;" onclick="return confirm('Apakah kamu yakin ingin menghapus produk ini?')">
+                                        <span class="material-symbols-rounded" style="font-size: 16px; vertical-align: middle;">delete</span> Hapus
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
                 <div class="col-12 text-center py-5 mt-5"> 
-                    <span class="material-symbols-rounded" style="font-size: 4rem; color: #ddd; display: block; margin-bottom: 40px;">inventory_2</span>
+                    <span class="material-symbols-rounded" style="font-size: 4rem; color: #ddd; display: block; margin-bottom: 20px;">inventory_2</span>
                     <p class="text-muted">Belum ada produk. Yuk, tambah produk pertamamu!</p>
                 </div>
             <?php endif; ?>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let items = document.querySelectorAll('.product-item');
+            
+            items.forEach(item => {
+                let text = item.innerText.toLowerCase();
+                item.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
 
 <?php
-require_once '../includes/footer.php';
+if(file_exists('../includes/footer.php')) {
+    require_once '../includes/footer.php';
+}
 ?>
 
 </body>
