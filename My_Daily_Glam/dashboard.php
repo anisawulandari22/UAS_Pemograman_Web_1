@@ -32,7 +32,6 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
             position: relative;
         }
 
-        /* --- Elemen Bunga Background --- */
         .flower {
             position: fixed;
             color: rgba(255, 182, 193, 0.2); 
@@ -45,7 +44,6 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
         .flower-1 { top: -50px; right: -50px; font-size: 300px; transform: rotate(20deg); }
         .flower-2 { bottom: -30px; left: -30px; font-size: 200px; transform: rotate(-15deg); }
 
-        /* --- Top Navbar --- */
         .top-header {
             background: white;
             padding: 15px 40px;
@@ -80,7 +78,6 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
             border: none;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             height: 100vh;
             width: 260px;
@@ -108,13 +105,11 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
             border-radius: 15px;
         }
 
-        /* Main Content Area */
         .main-content {
             margin-left: 260px;
             padding: 40px;
         }
 
-        /* Banner Style */
         .banner-glam {
             background: var(--pink-gradient);
             border-radius: 30px; padding: 40px;
@@ -122,7 +117,6 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
             box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
         }
 
-        /* Action Cards Styling */
         .action-card {
             background: white; border: none; border-radius: 25px; padding: 20px;
             text-align: center; transition: 0.3s; cursor: pointer; height: 100%;
@@ -155,7 +149,6 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
         }
         .mood-box { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
 
-        /* Skincare List */
         .skincare-item {
             background: #FFF9FA;
             padding: 15px;
@@ -371,4 +364,3 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
     </script>
 </body>
 </html>
-</php>
