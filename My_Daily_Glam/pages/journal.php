@@ -1,9 +1,14 @@
 <?php
-if (!isset($_COOKIE['user_id'])) {
+session_start();
+
+require '../koneksi/connection.php';
+
+if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true) {
     header("Location: ../auth/login.php"); 
     exit;
 }
-$nama_user = $_COOKIE['user_name'];
+
+$nama_user = $_SESSION['username'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -12,7 +17,7 @@ $nama_user = $_COOKIE['user_name'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jurnal - MyDailyGlam</title>
     <link rel="stylesheet" href="../assets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
     
     <style>
@@ -180,37 +185,6 @@ $nama_user = $_COOKIE['user_name'];
         .bg-special { background: #F8BBD0; color: #C2185B; }
 
     </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const journalList = document.querySelector('.journal-list');
-            const storedJournals = JSON.parse(localStorage.getItem('my_journals')) || [];
-
-            storedJournals.forEach(item => {
-                const entryHtml = `
-                    <div class="journal-card">
-                        <div class="icon-box" style="background: ${item.type === 'Pagi' ? '#FFF9E6' : '#F3E5F5'};">
-                            <span class="material-symbols-rounded" style="color: ${item.type === 'Pagi' ? '#FFB300' : '#9C27B0'};">
-                                ${item.type === 'Pagi' ? 'wb_sunny' : 'nightlight'}
-                            </span>
-                        </div>
-                        <div class="content-body">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="entry-title">${item.title}</h5>
-                                <span class="status-badge ${item.type === 'Pagi' ? 'bg-morning' : 'bg-evening'}">${item.type}</span>
-                            </div>
-                            <p class="entry-meta">${item.date}</p>
-                            <p class="entry-desc">${item.desc}</p>
-                            <div class="tag-container">
-                                ${item.products.split(',').map(p => `<span class="badge-tag">${p.trim()}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                journalList.insertAdjacentHTML('afterbegin', entryHtml);
-            });
-        });
-    </script>
 </head>
 <body>
 
@@ -271,6 +245,7 @@ $nama_user = $_COOKIE['user_name'];
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const journalContainer = document.querySelector('.journal-list'); 
@@ -295,7 +270,9 @@ $nama_user = $_COOKIE['user_name'];
         });
     </script>
 <?php
-require_once '../includes/footer.php';
+if(file_exists('../includes/footer.php')){
+    require_once '../includes/footer.php';
+}
 ?>
 
 </body>
