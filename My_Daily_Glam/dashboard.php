@@ -195,7 +195,7 @@ $nama_user = $is_logged_in ? $_SESSION['username'] : "Cantik";
                     <span class="material-symbols-rounded">account_circle</span>
                     <?= htmlspecialchars($nama_user); ?>
                 </div>
-                <a href="auth/logout.php" class="btn-auth-pill" onclick="return confirm('Apakah Anda yakin ingin keluar?')">
+                <a href="logout.php" class="btn-auth-pill" onclick="return confirm('Apakah Anda yakin ingin keluar?')">
                     <span class="material-symbols-rounded" style="font-size: 20px;">logout</span> Keluar
                 </a>
             </div>
