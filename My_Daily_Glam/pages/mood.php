@@ -1,13 +1,18 @@
 <?php
-$host = "localhost"; $user = "root"; $pass = ""; $db = "my_daily_glam";
-$conn = mysqli_connect($host, $user, $pass, $db);
+session_start();
 
-if (!isset($_COOKIE['user_id'])) {
+include '../koneksi/connection.php';
+
+if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true) {
     header("Location: ../auth/login.php");
     exit;
 }
-$user_id = $_COOKIE['user_id'];
-$nama_user = isset($_COOKIE['user_name']) ? $_COOKIE['user_name'] : 'User';
+
+$user_id = $_SESSION['user_id'];
+$nama_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
+
+$host = "localhost"; $user = "root"; $pass = ""; $db = "my_daily_glam";
+$conn = mysqli_connect($host, $user, $pass, $db);
 
 if (isset($_POST['save_mood'])) {
     $tgl = $_POST['tanggal'];
@@ -42,7 +47,7 @@ while ($row = mysqli_fetch_assoc($res)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mood Tracker - MyDailyGlam</title>
     <link rel="stylesheet" href="../assets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
     
     <style>
@@ -211,7 +216,7 @@ while ($row = mysqli_fetch_assoc($res)) {
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const moodModalObj = new bootstrap.Modal(document.getElementById('moodModal'));
         function openMoodModal(date, score, note) {
@@ -235,7 +240,9 @@ while ($row = mysqli_fetch_assoc($res)) {
     </script>
 
 <?php
-require_once '../includes/footer.php';
+if(file_exists('../includes/footer.php')) {
+    require_once '../includes/footer.php';
+}
 ?>
 
 </body>
