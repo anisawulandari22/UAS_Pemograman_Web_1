@@ -62,3 +62,9 @@ Laporan bulanan mood dan product yang dapat di ekspor ke dalam format excel dan 
 <img width="1919" height="968" alt="image" src="https://github.com/user-attachments/assets/db79f01f-0d11-4c3b-bbaa-d2c995453e4c" />
 
 ---
+
+
+## Tautan Proyek Glam
+
+- 🌐 Website Aplikasi: [Klik di sini](https://aspel.cyou/my_daily_glam/)
+- 📁 Google Drive (File Video ): [Klik di sini](https://drive.google.com/drive/folders/1QtWfPoRVCd5NXyRxfgT_IuF_rb4fp_ga?usp=sharing)
